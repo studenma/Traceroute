@@ -1,0 +1,32 @@
+.\" Manpage for trace.
+.\" Contact xstude23@stud.fit.vutbr.cz to correct errors or typos.
+.TH man 8 "23 Apr 2017" "1.0" "trace man page"
+.SH NAME
+trace \- Zobrazuje pruchod paketu od zdroje k cili
+.SH SYNOPSIS
+trace [-f first_TTL] [-m max_TTL] ip_adress
+.SH DESCRIPTION
+Pro zpracovani argumentu neni vytvorena zadna speciani funkce, ale k overeni spravnosti vstupu dochazi primo ve funkci main. Osetreni argumentu probiha pomoci spousty cyklu, ikdyz jde asi zvolit i efektivnejsi zpusob. Ip adresa musi byt zadana jako posledni argument, jinak se trace ukonci s chybou.
+
+Kontrola samotne ip adresy jiz neni soucasti osetreni argumentu, ale je pro ni vytvorena specialni funkce check_ip_address. Tato funkce zjisti, jestli se jedna o ipv4 nebo ipv6. Rozhodne se na zakalde toho, jestli se v adrese nachazi dvojtecka. Kdyz se nenachazi, jedna se o ipv4. Dale funkce kontroluje, jestli se vubec skutecne jedna o ip adresu.
+
+Pro vytvoreni socketu jsou vytvoreny dve funkce, jedna pro ipv4, druha pro ipv6. Lisi se jen minimalne a neni to nejefektivnejsi zpusob, ale pripadalo mi prehlednejsi, kdyz funkce jsou oddelene.
+
+Vlastne v celem kodu se objevuji pary temer identickych kodu, kde jeden z nich je pro ipv4, druhy pro ipv6.
+
+Pro mereni doby odezvy jsem pouzil strukturu timeval. Vytvoril jsem dve tyto struktury, ktere jsou, pro jednodussi praci, globalni. Nejdrive zjistim aktualni cas v momente, kdy zavolame funcki sendto a ulozime vyseldek do prvni struktury (funkce gettimeofday je hned za sendto). Pote do druhe struktury ulozime aktualni cas, kdy obdrzime zpravu (hned za funkci recvmsg). Pote oba caqsy odecteme a ziskame dobu odezvy.
+
+Jsou zde i jine globalni promenne, napriklad prepinac, jestli se jedna o ipv4 nebo ipv6, zda doslo k timeoutu a podobne.
+
+K vypisu ip adresy dochazi primo ve funkci recv_err, k vypsani doby odezvy dochazi v mainu.
+
+.SH BUGS
+Osetreni chyb H!, N!, P!, X! - malo otestovane, neni uplne jiste, ze funguji vsechny spravne, ale myslim, ze by to melo byt v poradku
+
+Ipv6 neni otestovana na centosu, protoze jsem nemel jak ji tam otestovat. Ale pri testovani na merlinovi ipv6 funguje
+
+Zpracovani argumentu - ip adresa musi byt zadana az jako poseldni argument - nemyslim, ze to je vylozene bug, ale z duvodu testovani to radsi pisu i sem
+.SH SEE ALSO
+traceroute(8)
+.SH AUTHOR
+Martin Studeny (xstude23)
